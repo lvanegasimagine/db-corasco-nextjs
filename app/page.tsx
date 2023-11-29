@@ -1,26 +1,27 @@
+'use client'
 import ButtonPost from '@/components/ButtonPost'
 import { db } from '@/lib/prisma'
+import { useEffect, useState } from 'react';
 
-async function getData() {
-  const res = await fetch('/api/chapter')
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
+export default function Home() {
 
-  if (!res.ok) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error('Failed to fetch data')
+  const [notes, setNotes] = useState([])
+  
+  useEffect(() => {
+    loadNotes()
+  }, [])
+  
+  async function loadNotes() {
+    const res = await fetch("/api/chapter");
+    const data = await res.json();
+    setNotes(data);
   }
 
-  return res.json()
-}
-
-export default async function Home() {
-
-  const data = await db.chapter.findMany({})
+  console.log(notes)
   
   return (
     <main className="flex h-screen items-center justify-center flex-col gap-y-5">
-      {data.map((data: any) => (
+      {notes.map((data: any) => (
         <div key={data.id}>
           <h3>{data.title}</h3>
           <span>{data.description}</span>

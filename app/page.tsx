@@ -1,28 +1,32 @@
 import ButtonPost from '@/components/ButtonPost'
-import prisma from '@/lib/prisma'
+import { db } from '@/lib/prisma'
 
 async function getData() {
-  const departament = await prisma.chapter.findMany()
+  const res = await fetch('/api/chapter')
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
 
-  if(!departament) throw new Error('No hay departamento')
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error('Failed to fetch data')
+  }
 
-  return departament
+  return res.json()
 }
 
 export default async function Home() {
-  
-  const data = await getData()
-  console.log("🚀 ~ file: page.tsx:16 ~ Home ~ data:", data)
+
+  const data = await db.chapter.findMany({})
   
   return (
     <main className="flex h-screen items-center justify-center flex-col gap-y-5">
-      {data.map((data) => (
+      {data.map((data: any) => (
         <div key={data.id}>
           <h3>{data.title}</h3>
           <span>{data.description}</span>
         </div>
       ))}
-      <ButtonPost/>
+      <ButtonPost />
     </main>
   )
 }

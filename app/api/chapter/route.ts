@@ -1,10 +1,10 @@
-import prisma from '@/lib/prisma'
+import { db } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
     try {
-        const chapter = prisma.chapter.findMany()
+        const chapter = db.chapter.findMany()
 
         if (!chapter) return NextResponse.json({ error: 'Chapter not found' }, { status: 404 })
 
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     const body = await request.json()
 
     try {
-        const chapter = await prisma.chapter.create({
+        const chapter = await db.chapter.create({
             data: body
         })
 
